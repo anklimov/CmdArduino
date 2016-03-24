@@ -38,7 +38,6 @@
     its possible to execute individual functions within the sketch. 
 */
 /**************************************************************************/
-#include <avr/pgmspace.h>
 #if ARDUINO >= 100
 #include <Arduino.h>
 #else
@@ -55,9 +54,7 @@ static uint8_t *msg_ptr;
 static cmd_t *cmd_tbl_list, *cmd_tbl;
 
 // text strings for command prompt (stored in flash)
-const char cmd_banner[] PROGMEM = "*************** CMD *******************";
-const char cmd_prompt[] PROGMEM = "CMD >> ";
-const char cmd_unrecog[] PROGMEM = "CMD: Command not recognized.";
+const char cmd_unrecog[] = "CMD: Command not recognized.";
 
 /**************************************************************************/
 /*!
@@ -69,12 +66,7 @@ void cmd_display()
     char buf[50];
 
     Serial.println();
-
-    strcpy_P(buf, cmd_banner);
-    Serial.println(buf);
-
-    strcpy_P(buf, cmd_prompt);
-    Serial.print(buf);
+    Serial.print("> ");
 }
 
 /**************************************************************************/
@@ -90,8 +82,6 @@ void cmd_parse(char *cmd)
     char *argv[30];
     char buf[50];
     cmd_t *cmd_entry;
-
-    fflush(stdout);
 
     // parse the command line statement and break it up into space-delimited
     // strings. the array of strings will be saved in the argv array.
