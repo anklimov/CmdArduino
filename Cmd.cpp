@@ -53,9 +53,6 @@ static uint8_t *msg_ptr;
 // linked list for command table
 static cmd_t *cmd_tbl_list, *cmd_tbl;
 
-// text strings for command prompt (stored in flash)
-const char cmd_unrecog[] = "CMD: Command not recognized.";
-
 /**************************************************************************/
 /*!
     Generate the main command prompt
@@ -63,10 +60,8 @@ const char cmd_unrecog[] = "CMD: Command not recognized.";
 /**************************************************************************/
 void cmd_display()
 {
-    char buf[50];
-
     Serial.println();
-    Serial.print("> ");
+    Serial.print(F(">> "));
 }
 
 /**************************************************************************/
@@ -82,6 +77,8 @@ void cmd_parse(char *cmd)
     char *argv[30];
     char buf[50];
     cmd_t *cmd_entry;
+
+    fflush(stdout);
 
     // parse the command line statement and break it up into space-delimited
     // strings. the array of strings will be saved in the argv array.
@@ -107,8 +104,7 @@ void cmd_parse(char *cmd)
     }
 
     // command not recognized. print message and re-generate prompt.
-    strcpy_P(buf, cmd_unrecog);
-    Serial.println(buf);
+    Serial.println(F("Invalid command"));
 
     cmd_display();
 }
@@ -127,6 +123,7 @@ void cmd_handler()
     switch (c)
     {
     case '\r':
+    case '\n':
         // terminate the msg and reset the msg ptr. then send
         // it to the handler for processing.
         *msg_ptr = '\0';
