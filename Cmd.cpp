@@ -48,7 +48,7 @@
 
 // command line message buffer and pointer
 static uint8_t msg[MAX_MSG_SIZE];
-static uint8_t *msg_ptr;
+static uint8_t msg_ptr;
 
 // linked list for command table
 static cmd_t *cmd_tbl_list, *cmd_tbl;
@@ -126,16 +126,16 @@ void cmd_handler()
     case '\n':
         // terminate the msg and reset the msg ptr. then send
         // it to the handler for processing.
-        *msg_ptr = '\0';
+        msg[msg_ptr] = '\0';
         Serial.print("\r\n");
         cmd_parse((char *)msg);
-        msg_ptr = msg;
+        msg_ptr = 0;
         break;
     
     case '\b':
         // backspace 
         Serial.print(c);
-        if (msg_ptr > msg)
+        if (msg_ptr)
         {
             msg_ptr--;
         }
@@ -144,7 +144,7 @@ void cmd_handler()
     default:
         // normal character entered. add it to the buffer
         Serial.print(c);
-        *msg_ptr++ = c;
+        if (msg_ptr < MAX_MSG_SIZE-1) msg[msg_ptr++] = c;
         break;
     }
 }
@@ -172,7 +172,7 @@ void cmdPoll()
 void cmdInit(uint32_t speed)
 {
     // init the msg ptr
-    msg_ptr = msg;
+    msg_ptr = 0;
 
     // init the command table
     cmd_tbl_list = NULL;
