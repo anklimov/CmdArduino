@@ -78,6 +78,7 @@ void cmd_parse(char *cmd)
     char buf[50];
     cmd_t *cmd_entry;
 
+    if (!cmd[0]) return;
     fflush(stdout);
 
     // parse the command line statement and break it up into space-delimited
