@@ -55,6 +55,8 @@ typedef struct _cmd_t
 void cmdInit(uint32_t speed);
 void cmdPoll();
 void cmdAdd(char *name, void (*func)(int argc, char **argv));
+void cmd_parse(char *cmd);
+
 uint32_t cmdStr2Num(char *str, uint8_t base);
 
 #endif //CMD_H
