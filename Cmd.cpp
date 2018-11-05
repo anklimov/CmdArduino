@@ -43,6 +43,9 @@
 #else
 #include <WProgram.h>
 #endif
+#ifndef debugSerial
+#define debugSerial Serial
+#endif
 #include "HardwareSerial.h"
 #include "Cmd.h"
 
@@ -60,8 +63,8 @@ static cmd_t *cmd_tbl_list, *cmd_tbl;
 /**************************************************************************/
 void cmd_display()
 {
-    Serial.println();
-    Serial.print(F(">> "));
+    debugSerial.println();
+    debugSerial.print(F(">> "));
 }
 
 /**************************************************************************/
@@ -105,7 +108,7 @@ void cmd_parse(char *cmd)
     }
 
     // command not recognized. print message and re-generate prompt.
-    Serial.println(F("Invalid command"));
+    debugSerial.println(F("Invalid command"));
 
     cmd_display();
 }
@@ -119,7 +122,7 @@ void cmd_parse(char *cmd)
 /**************************************************************************/
 void cmd_handler()
 {
-    char c = Serial.read();
+    char c = debugSerial.read();
 
     switch (c)
     {
@@ -128,14 +131,14 @@ void cmd_handler()
         // terminate the msg and reset the msg ptr. then send
         // it to the handler for processing.
         msg[msg_ptr] = '\0';
-        Serial.print("\r\n");
+        debugSerial.print("\r\n");
         cmd_parse((char *)msg);
         msg_ptr = 0;
         break;
     
     case '\b':
         // backspace 
-        Serial.print(c);
+        debugSerial.print(c);
         if (msg_ptr)
         {
             msg_ptr--;
@@ -144,7 +147,7 @@ void cmd_handler()
     
     default:
         // normal character entered. add it to the buffer
-        Serial.print(c);
+        debugSerial.print(c);
         if (msg_ptr < MAX_MSG_SIZE-1) msg[msg_ptr++] = c;
         break;
     }
@@ -158,7 +161,7 @@ void cmd_handler()
 /**************************************************************************/
 void cmdPoll()
 {
-    while (Serial.available())
+    while (debugSerial.available())
     {
         cmd_handler();
     }
@@ -179,7 +182,7 @@ void cmdInit(uint32_t speed)
     cmd_tbl_list = NULL;
 
     // set the serial speed
-    Serial.begin(speed);
+    debugSerial.begin(speed);
 }
 
 /**************************************************************************/
